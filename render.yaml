@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: tokat-arena-signal
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: node signaling.js
+    healthCheckPath: /
