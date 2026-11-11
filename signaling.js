@@ -60,7 +60,19 @@ wss.on("connection", (ws) => {
   ws.id = 0;
   send(ws, { t: "ice_servers", list: iceServers() });
 
-  ws.on("message", (raw) => {
+  ws.on("message", (raw, isBinary) => {
+    // RELAY: ikili paket = [hedef id u32 LE][oyun verisi]. Sunucu hedefi gönderen id'siyle değiştirip iletir.
+    if (isBinary) {
+      const room = rooms.get(ws.room);
+      if (!room || raw.length < 4) return;
+      const to = raw.readUInt32LE(0);
+      const target = to === 1 ? room.host : room.peers.get(to);
+      if (!target || target.readyState !== 1) return;
+      const buf = Buffer.from(raw);
+      buf.writeUInt32LE(ws.id >>> 0, 0);
+      target.send(buf, { binary: true });
+      return;
+    }
     let d;
     try {
       d = JSON.parse(raw.toString());
