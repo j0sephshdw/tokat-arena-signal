@@ -48,7 +48,7 @@ function send(ws, obj) {
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { "content-type": "text/plain; charset=utf-8" });
-  res.end(`Tokat Arena signaling OK. Açık oda: ${rooms.size}\n`);
+  res.end(`Tokat Arena signaling OK (v2 relay). Açık oda: ${rooms.size}\n`);
 });
 
 const wss = new WebSocketServer({ server, maxPayload: 64 * 1024 });
